@@ -5,5 +5,14 @@
     <RootNamespace>AConverse_Rest</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="IBM.WatsonDeveloperCloud" Version="2.17.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.1" />
+  </ItemGroup>
 
+  <ItemGroup>
+    <None Update="audio_cache\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
