@@ -1,6 +1,6 @@
-namespace AConverse_Rest.Models.TextToSpeech
+namespace AConverse_Rest.Models.Converse
 {
-    public class TTSRequest
+    public class SynthesizeRequest
     {
         /// <summary>
         /// Text to be converted to speech, also used as a identifier for caching

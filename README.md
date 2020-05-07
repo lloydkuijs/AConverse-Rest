@@ -6,7 +6,7 @@ If you want to further develop this project yourself, you'll have to send me a m
 
 
 ### Keys
-To work on **TTS** or **STT** You will need to get the required keys, see **_config.yml** for the needed keys.
+To work on **TTS** or **STT** You will need to get the required keys, see **_config.yml** for the needed keys. I Recommend using ```git update-index --skip-worktree _config.yml``` to stop tracking local changes to the **_config.yml** file.
 
 ### Scripts
 If you want to make use of the python scripts provided in the base directory, take a look at the **developer_requirements.txt**, you can install these through the use of ```pip install -r developer_requirements.txt``` (On windows you might need to install Python first, and for Linux you might want to use pip3 for installing the dependencies in python3 instead of 2). 

@@ -8,6 +8,8 @@
   <ItemGroup>
     <PackageReference Include="IBM.WatsonDeveloperCloud" Version="2.17.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.10.3" />
+    <PackageReference Include="YamlDotNet" Version="8.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,4 +17,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  
+  <PropertyGroup>
+    <UseAppHost>false</UseAppHost>
+  </PropertyGroup>
 </Project>

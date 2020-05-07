@@ -1,6 +1,6 @@
-namespace AConverse_Rest.Models.TextToSpeech
+namespace AConverse_Rest.Models.Converse
 {
-    public class TTSR
+    public class SynthesizeResponse
     {
         /// <summary>
         /// Text to be converted to speech, also used as a identifier for caching
@@ -10,9 +10,11 @@ namespace AConverse_Rest.Models.TextToSpeech
 
 
         /// <summary>
-        /// Audio in MP3 format
+        /// Audio in .ogg format
         /// </summary>
-        /// <value>MP3 formatted byte array</value>
+        /// <value>.ogg formatted byte array</value>
         public byte[] Audio { get; set; }
+
+        public string AudioType { get; set; } = "ogg";
     }
 }
