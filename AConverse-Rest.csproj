@@ -1,23 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>AConverse_Rest</RootNamespace>
+    <UserSecretsId>5b8c8980-431f-4c25-9cbc-bddfe45a5275</UserSecretsId>
   </PropertyGroup>
-
   <ItemGroup>
+    <PackageReference Include="IBM.Watson.SpeechToText.v1" Version="4.4.0" />
+    <PackageReference Include="IBM.Watson.TextToSpeech.v1" Version="4.4.0" />
     <PackageReference Include="IBM.WatsonDeveloperCloud" Version="2.17.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.1" />
     <PackageReference Include="MongoDB.Driver" Version="2.10.3" />
     <PackageReference Include="YamlDotNet" Version="8.1.0" />
   </ItemGroup>
-
   <ItemGroup>
     <None Update="audio_cache\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  
   <PropertyGroup>
     <UseAppHost>false</UseAppHost>
   </PropertyGroup>
