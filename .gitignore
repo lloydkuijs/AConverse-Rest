@@ -5,6 +5,11 @@ project.lock.json
 *.pyc
 nupkg/
 
+# ignore appsettings configuration files
+.appsettings.Development.json
+appsettings.staging.json
+appsettings.production.json
+
 # Virtualenv
 /env
 
