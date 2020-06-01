@@ -4,13 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using AConverse_Rest.Models.Speech.TextToSpeech;
 using Microsoft.AspNetCore.Http;
 using io = System.IO;
 using System.IO;
 using System.Text;
 using YamlDotNet.RepresentationModel;
 using AConverse_Rest.Models.Converse;
+using System.Media;
+using IBM.Cloud.SDK.Core.Authentication.Iam;
+using IBM.Watson.SpeechToText.v1;
+using IBM.Watson.TextToSpeech.v1;
+using Microsoft.Extensions.Configuration;
 
 namespace AConverse_Rest.Controllers
 {
@@ -19,10 +23,14 @@ namespace AConverse_Rest.Controllers
     [Route("converse")]
     public class ConverseController : ControllerBase
     {
-        private static string _cache_path = Path.Combine(AppContext.BaseDirectory, "audio_cache");
-        private static Dictionary<string, string> _cache = new Dictionary<string, string>();
-        static ConverseController()
+        private string _cache_path = Path.Combine(AppContext.BaseDirectory, "audio_cache");
+        private Dictionary<string, string> _cache = new Dictionary<string, string>();
+        private SpeechToTextService _speechToText;
+        private TextToSpeechService _textToSpeech;
+
+        public ConverseController(IConfiguration configuration)
         {
+
             // TODO: temporary, read static cache instead of dynamic switching between cache and real requests
             using (var reader = new StreamReader(Path.Combine(_cache_path, "cache_map.yml")))
             {
@@ -39,16 +47,36 @@ namespace AConverse_Rest.Controllers
                     Console.WriteLine($"Key: {entry.Key}, Value: {entry.Value}");
                     _cache.Add(entry.Key.ToString(), entry.Value.ToString());
                 }
-
             }
+
+            // Text to speech
+            var watson_tts_key = configuration["AConverse:TTS:Key"];
+            var watson_tts_url = configuration["AConverse:TTS:Url"];
+
+            _textToSpeech = new TextToSpeechService(new IamAuthenticator(apikey: watson_tts_key));
+            _textToSpeech.SetServiceUrl(watson_tts_url);
+
+
+            // Speech to text
+            var watson_stt_key = configuration["AConverse:STT:Key"];
+            var watson_stt_url = configuration["AConverse:STT:Url"];
+
+            _speechToText = new SpeechToTextService(new IamAuthenticator(apikey: watson_stt_key));
+
+            _speechToText.SetServiceUrl(watson_stt_url);
+
         }
 
         [HttpGet]
         public IActionResult PrintCache()
         {
+            var audio = io.File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "audio_cache", "Bye.ogg"));
+
+            var result = _speechToText.Recognize(audio, contentType: "audio/ogg");
+
             return Ok(String.Join("\n", _cache.Select(item => item.Key + ": " + item.Value).ToArray()));
         }
-
+        
         [HttpPost]
         [Route("synthesize")]
         public async Task<IActionResult> Synthesize([FromBody] SynthesizeRequest request)
@@ -60,7 +88,7 @@ namespace AConverse_Rest.Controllers
                 // Issues with large files were reported, if this function throws an error check up on ReadAllBytesAsync
                 audio_data = await io.File.ReadAllBytesAsync(Path.Combine(_cache_path, filename));
 
-                return Ok(new TTSResponse { Text = request.Text, Audio = audio_data });
+                return Ok(new SynthesizeResponse { Text = request.Text, Audio = audio_data });
             }
 
             return NotFound("Item was not found in cache, non cache values are currently not supported");
@@ -69,7 +97,11 @@ namespace AConverse_Rest.Controllers
         [HttpPost]
         [Route("transcribe")]
         public IActionResult Transcribe([FromBody] TranscribeRequest request)
-        {   
+        {
+            var audio_data = Convert.FromBase64String(request.Audio);
+
+            Console.WriteLine(audio_data);
+
             return Ok("Item was not found in cache, non cache values are currently not supported");
         }
     }
