@@ -15,6 +15,7 @@ using IBM.Cloud.SDK.Core.Authentication.Iam;
 using IBM.Watson.SpeechToText.v1;
 using IBM.Watson.TextToSpeech.v1;
 using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 
 namespace AConverse_Rest.Controllers
 {
@@ -76,7 +77,7 @@ namespace AConverse_Rest.Controllers
 
             return Ok(String.Join("\n", _cache.Select(item => item.Key + ": " + item.Value).ToArray()));
         }
-        
+
         [HttpPost]
         [Route("synthesize")]
         public async Task<IActionResult> Synthesize([FromBody] SynthesizeRequest request)
@@ -98,10 +99,29 @@ namespace AConverse_Rest.Controllers
         [Route("transcribe")]
         public IActionResult Transcribe([FromBody] TranscribeRequest request)
         {
+            if (request.AudioType != "audio/l16")
+            {
+                return BadRequest($"Unsupported AudioType given: {request.AudioType}");
+            }
+
             var audio_data = Convert.FromBase64String(request.Audio);
 
             Console.WriteLine(audio_data);
+            
+            // TODO: Probably check for 
+            string channels = String.Empty;
+            string sampling_rate = String.Empty;
 
+            if(request.Channels != 0)
+                channels = request.Channels.ToString();
+            
+            if(request.SamplingRate != 0)
+                sampling_rate = request.SamplingRate.ToString();
+
+            var result = _speechToText.Recognize(audio_data, contentType: $"{request.AudioType}; rate={sampling_rate}; channels={channels}");
+            
+            Debug.WriteLine(result.Response);
+            
             return Ok("Item was not found in cache, non cache values are currently not supported");
         }
     }
